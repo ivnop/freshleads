@@ -1,0 +1,41 @@
+﻿name: Run Domain Scanner and Update Feed
+
+on:
+  schedule:
+    - cron: '0 */12 * * *' # a cada 12 horas
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run fresh_domains
+        run: |
+          python fresh_domains.py
+
+      - name: Find latest CSV and copy to fresh_domains_latest.csv
+        run: |
+          LATEST= || echo ""
+          if [ -n "" ]; then cp "" fresh_domains_latest.csv; fi
+          ls -la
+
+      - name: Generate feed.json and per-niche CSVs
+        run: python generate_feed.py
+
+      - name: Commit results
+        run: |
+          git config --global user.name "bot"
+          git config --global user.email "bot@github.com"
+          git add fresh_domains_*.csv fresh_domains_latest.csv feed.json fresh_*.csv || true
+          git commit -m "update feed" || echo "no changes"
+          git push
