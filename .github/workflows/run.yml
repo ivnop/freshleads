@@ -1,15 +1,22 @@
-﻿name: Run Domain Scanner and Update Feed
+name: Run Domain Scanner and Update Feed
 
 on:
   schedule:
     - cron: '0 */12 * * *' # a cada 12 horas
   workflow_dispatch:
 
+permissions:
+  contents: write   # permite push via GITHUB_TOKEN
+
 jobs:
   scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -20,22 +27,36 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run fresh_domains
-        run: |
-          python fresh_domains.py
+        run: python fresh_domains.py
 
-      - name: Find latest CSV and copy to fresh_domains_latest.csv
+      - name: Copy latest CSV -> fresh_domains_latest.csv (if exists)
+        shell: bash
         run: |
-          LATEST= || echo ""
-          if [ -n "" ]; then cp "" fresh_domains_latest.csv; fi
+          set -e
+          LATEST=$(ls -t fresh_domains_*.csv 2>/dev/null | head -n1 || true)
+          if [ -n "$LATEST" ]; then
+            cp "$LATEST" fresh_domains_latest.csv
+            echo "Copied $LATEST -> fresh_domains_latest.csv"
+          else
+            echo "No fresh_domains_*.csv found; skipping copy"
+          fi
           ls -la
 
       - name: Generate feed.json and per-niche CSVs
         run: python generate_feed.py
 
       - name: Commit results
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name "bot"
-          git config --global user.email "bot@github.com"
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          # make remote use the token so git push will authenticate
+          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
+
           git add fresh_domains_*.csv fresh_domains_latest.csv feed.json fresh_*.csv || true
-          git commit -m "update feed" || echo "no changes"
-          git push
+          git status --porcelain
+          git commit -m "update feed" || echo "no changes to commit"
+          git push origin HEAD:main || echo "push failed"
