@@ -1,36 +1,31 @@
 {
-  "updated": "2026-01-19T01:05:52.916879Z",
+  "updated": "2026-01-19T12:28:53.549519Z",
   "count": 5,
   "items": [
     {
       "domain": "data-analytics-app.com",
-      "title": "",
       "niche": "other",
-      "score": 1
+      "score": 35
     },
     {
       "domain": "example-ai-startup.com",
-      "title": "",
       "niche": "other",
-      "score": 1
+      "score": 35
     },
     {
       "domain": "fastcloud-app.com",
-      "title": "",
       "niche": "other",
-      "score": 1
+      "score": 45
     },
     {
       "domain": "myshopdigital.com",
-      "title": "",
       "niche": "ecom",
-      "score": 1
+      "score": 60
     },
     {
       "domain": "paybotcloud.com",
-      "title": "",
       "niche": "other",
-      "score": 1
+      "score": 60
     }
   ]
 }
