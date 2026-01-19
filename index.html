@@ -1,82 +1,113 @@
-﻿<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-  <meta charset='utf-8'/>
-  <title>FreshLeads Dashboard</title>
-  <meta name='viewport' content='width=device-width,initial-scale=1'/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FreshLeads — Domínios Novos que Vendem</title>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body{font-family:Arial,sans-serif;max-width:1100px;margin:20px auto;padding:10px}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:6px;border-bottom:1px solid #eee;text-align:left}
-    input, select{padding:8px;margin:6px 0}
+    body { background: radial-gradient(1200px 600px at 10% -10%, #0ea5e9 0%, transparent 40%), radial-gradient(1200px 600px at 110% 10%, #22c55e 0%, transparent 40%), #0b1220; }
   </style>
 </head>
-<body>
-  <h1>FreshLeads — Dashboard</h1>
-  <p>Last update: <span id="updated">-</span> — Total: <span id="count">-</span></p>
+<body class="text-slate-100">
+  <header class="max-w-6xl mx-auto px-6 py-12">
+    <div class="flex items-center justify-between">
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Fresh<span class="text-sky-400">Leads</span></h1>
+      <a href="#premium" class="rounded-xl bg-sky-500 px-5 py-2 font-semibold text-slate-900 hover:bg-sky-400">Premium</a>
+    </div>
+    <p class="mt-6 max-w-2xl text-slate-300">Domínios recém-registrados com potencial comercial. Atualizado automaticamente. Grátis para testar, premium para lucrar.</p>
+  </header>
 
-  <label>Filter by niche:
-    <select id="nicheFilter">
-      <option value="">All</option>
-      <option value="clinics">Clinics</option>
-      <option value="ecom">E-commerce</option>
-      <option value="services">Services</option>
-      <option value="other">Other</option>
-    </select>
-  </label>
-  <label>Search:
-    <input type="search" id="q" placeholder="domain or title"/>
-  </label>
-  <button id="refresh">Refresh</button>
-  <p><a id="downloadAll" href="#" target="_blank">Download master CSV</a></p>
+  <main class="max-w-6xl mx-auto px-6">
+    <!-- KPIs -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+      <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
+        <p class="text-sm text-slate-400">Atualização</p>
+        <p id="kpi-updated" class="text-xl font-bold">—</p>
+      </div>
+      <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
+        <p class="text-sm text-slate-400">Itens (público)</p>
+        <p id="kpi-count" class="text-xl font-bold">—</p>
+      </div>
+      <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
+        <p class="text-sm text-slate-400">Categorias</p>
+        <p class="text-xl font-bold">Ecom • Serviços</p>
+      </div>
+      <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
+        <p class="text-sm text-slate-400">Acesso</p>
+        <p class="text-xl font-bold text-emerald-400">Free</p>
+      </div>
+    </section>
 
-  <table id="tbl"><thead><tr><th>Domain</th><th>Title</th><th>Niche</th><th>Score</th></tr></thead><tbody></tbody></table>
+    <!-- Public Feed -->
+    <section class="mb-16">
+      <div class="flex items-end justify-between mb-4">
+        <h2 class="text-2xl font-bold">Feed Público</h2>
+        <input id="search" placeholder="Buscar domínio…" class="rounded-xl bg-slate-900/70 px-4 py-2 text-sm outline-none ring-1 ring-slate-700 focus:ring-sky-400" />
+      </div>
+      <div class="overflow-hidden rounded-2xl ring-1 ring-slate-800">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900/80 text-slate-300">
+            <tr>
+              <th class="px-4 py-3">Domínio</th>
+              <th class="px-4 py-3">Categoria</th>
+              <th class="px-4 py-3">Score</th>
+            </tr>
+          </thead>
+          <tbody id="rows" class="divide-y divide-slate-800 bg-slate-900/40"></tbody>
+        </table>
+      </div>
+    </section>
 
-<script>
-const RAW_CSV = "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/freshleads/main/fresh_domains_latest.csv";
-const FEED_JSON = "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/freshleads/main/feed.json";
+    <!-- Premium CTA -->
+    <section id="premium" class="mb-20">
+      <div class="rounded-3xl bg-gradient-to-br from-sky-500/20 to-emerald-500/20 p-8 ring-1 ring-slate-700">
+        <div class="grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h3 class="text-3xl font-extrabold">Premium = Domínios que Vendem</h3>
+            <p class="mt-3 text-slate-300">Acesso aos domínios com maior score, histórico limpo e intenção comercial clara. Atualizações automáticas.</p>
+            <ul class="mt-4 space-y-2 text-slate-200">
+              <li>• Score avançado</li>
+              <li>• Categorias filtradas</li>
+              <li>• CSV pronto pra prospecção</li>
+            </ul>
+          </div>
+          <div class="text-center">
+            <p class="text-5xl font-extrabold mb-2">R$?</p>
+            <p class="text-slate-300 mb-6">pagamento único / mensal</p>
+            <a class="inline-block rounded-2xl bg-emerald-400 px-8 py-4 font-extrabold text-slate-900 hover:bg-emerald-300" href="#">Desbloquear Premium</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
-async function load(){
-  try {
-    const res = await fetch(FEED_JSON);
-    const feed = await res.json();
-    document.getElementById("updated").innerText = feed.updated;
-    document.getElementById("count").innerText = feed.count;
-    window.feedItems = feed.items;
-    render();
-  } catch(e){
-    document.getElementById("updated").innerText = "no data yet";
-    document.getElementById("count").innerText = "0";
-    window.feedItems = [];
-  }
-}
+  <footer class="border-t border-slate-800">
+    <div class="max-w-6xl mx-auto px-6 py-8 text-sm text-slate-400">© FreshLeads • Atualizado automaticamente</div>
+  </footer>
 
-function render(){
-  const niche = document.getElementById("nicheFilter").value;
-  const q = document.getElementById("q").value.toLowerCase();
-  const tbody = document.querySelector("#tbl tbody");
-  tbody.innerHTML = "";
-  const items = (window.feedItems || []).filter(item=>{
-    if(niche && item.niche !== niche) return false;
-    if(q && !(item.domain.includes(q) || (item.title && item.title.toLowerCase().includes(q)))) return false;
-    return true;
-  });
-  for(const it of items.slice(0,500)){
-    const tr = document.createElement("tr");
-    tr.innerHTML = <td><a href="http://" target="_blank"></a></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>;
-    tbody.appendChild(tr);
-  }
-  document.getElementById("downloadAll").href = "https://raw.githubusercontent.com/YOUR_GITHUB_USERNAME/freshleads/main/fresh_domains_latest.csv";
-}
-
-document.getElementById("nicheFilter").addEventListener("change", render);
-document.getElementById("q").addEventListener("input", render);
-document.getElementById("refresh").addEventListener("click", load);
-
-load();
-</script>
+  <script>
+    async function load() {
+      const res = await fetch('feed.json');
+      const data = await res.json();
+      document.getElementById('kpi-updated').textContent = new Date(data.updated).toLocaleString();
+      document.getElementById('kpi-count').textContent = data.count;
+      const rows = document.getElementById('rows');
+      const render = (items) => {
+        rows.innerHTML = '';
+        items.forEach(i => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td class="px-4 py-3 font-mono">${i.domain}</td><td class="px-4 py-3">${i.category}</td><td class="px-4 py-3">${i.score ?? '-'}</td>`;
+          rows.appendChild(tr);
+        });
+      };
+      render(data.items);
+      document.getElementById('search').addEventListener('input', e => {
+        const q = e.target.value.toLowerCase();
+        render(data.items.filter(i => i.domain.toLowerCase().includes(q)));
+      });
+    }
+    load();
+  </script>
 </body>
 </html>
