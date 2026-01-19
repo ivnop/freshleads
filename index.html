@@ -1,26 +1,35 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>FreshLeads — Domínios Novos que Vendem</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body { background: radial-gradient(1200px 600px at 10% -10%, #0ea5e9 0%, transparent 40%), radial-gradient(1200px 600px at 110% 10%, #22c55e 0%, transparent 40%), #0b1220; }
   </style>
 </head>
-<body class="text-slate-100">
-  <header class="max-w-6xl mx-auto px-6 py-12">
+<body class="text-slate-100 min-h-screen">
+  <!-- CONFIG: substitua estes valores antes de publicar -->
+  <!-- PIX_KEY: sua chave PIX (CPF/telefone/email/EVP) -->
+  <!-- TELEGRAM_LINK: link do seu Telegram, ex: https://t.me/SeuUsuario -->
+  <script>
+    // -- CONFIG VALUES (substitua antes de publicar) --
+    const PIX_KEY = "COLOQUE_SUA_CHAVE_PIX_AQUI";
+    const TELEGRAM_LINK = "https://t.me/SEU_TELEGRAM";
+  </script>
+
+  <header class="max-w-6xl mx-auto px-6 py-8">
     <div class="flex items-center justify-between">
       <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight">Fresh<span class="text-sky-400">Leads</span></h1>
-      <a href="#premium" class="rounded-xl bg-sky-500 px-5 py-2 font-semibold text-slate-900 hover:bg-sky-400">Premium</a>
+      <a id="cta-top" href="#plans" class="rounded-xl bg-sky-500 px-5 py-2 font-semibold text-slate-900 hover:bg-sky-400">Desbloquear Premium</a>
     </div>
-    <p class="mt-6 max-w-2xl text-slate-300">Domínios recém-registrados com potencial comercial. Atualizado automaticamente. Grátis para testar, premium para lucrar.</p>
+    <p class="mt-4 max-w-2xl text-slate-300">Domínios recém-registrados com potencial comercial. Atualizado automaticamente. Grátis para testar, premium para lucrar.</p>
   </header>
 
   <main class="max-w-6xl mx-auto px-6">
     <!-- KPIs -->
-    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
       <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
         <p class="text-sm text-slate-400">Atualização</p>
         <p id="kpi-updated" class="text-xl font-bold">—</p>
@@ -31,19 +40,22 @@
       </div>
       <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
         <p class="text-sm text-slate-400">Categorias</p>
-        <p class="text-xl font-bold">Ecom • Serviços</p>
+        <p class="text-xl font-bold">Ecom • Serviços • Outros</p>
       </div>
       <div class="rounded-2xl bg-slate-900/60 p-5 shadow">
         <p class="text-sm text-slate-400">Acesso</p>
-        <p class="text-xl font-bold text-emerald-400">Free</p>
+        <p class="text-xl font-bold text-emerald-400">Free + Premium</p>
       </div>
     </section>
 
     <!-- Public Feed -->
-    <section class="mb-16">
+    <section class="mb-12">
       <div class="flex items-end justify-between mb-4">
         <h2 class="text-2xl font-bold">Feed Público</h2>
-        <input id="search" placeholder="Buscar domínio…" class="rounded-xl bg-slate-900/70 px-4 py-2 text-sm outline-none ring-1 ring-slate-700 focus:ring-sky-400" />
+        <div class="flex gap-2">
+          <input id="search" placeholder="Buscar domínio…" class="rounded-xl bg-slate-900/70 px-4 py-2 text-sm outline-none ring-1 ring-slate-700 focus:ring-sky-400" />
+          <a id="downloadPublic" class="rounded-xl bg-slate-800/50 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800/70">Baixar CSV</a>
+        </div>
       </div>
       <div class="overflow-hidden rounded-2xl ring-1 ring-slate-800">
         <table class="w-full text-left text-sm">
@@ -59,55 +71,172 @@
       </div>
     </section>
 
-    <!-- Premium CTA -->
-    <section id="premium" class="mb-20">
-      <div class="rounded-3xl bg-gradient-to-br from-sky-500/20 to-emerald-500/20 p-8 ring-1 ring-slate-700">
-        <div class="grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h3 class="text-3xl font-extrabold">Premium</h3>
-            <p class="mt-3 text-slate-300">Acesso aos domínios com maior score, histórico limpo e intenção comercial clara. Atualizações automáticas.</p>
-            <ul class="mt-4 space-y-2 text-slate-200">
-              <li>• Score avançado</li>
-              <li>• Categorias filtradas</li>
-              <li>• CSV pronto pra prospecção</li>
-            </ul>
-          </div>
-          <div class="text-center">
-            <p class="text-5xl font-extrabold mb-2">R$?</p>
-            <p class="text-slate-300 mb-6">pagamento único / mensal</p>
-            <a class="inline-block rounded-2xl bg-emerald-400 px-8 py-4 font-extrabold text-slate-900 hover:bg-emerald-300" href="#">Desbloquear Premium</a>
-          </div>
+    <!-- Plans / Payment -->
+    <section id="plans" class="mb-20">
+      <h2 class="text-2xl font-bold mb-6">Planos Premium</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+
+        <!-- Starter -->
+        <div class="rounded-2xl bg-slate-900/60 p-6 shadow">
+          <h3 class="text-xl font-bold">Starter</h3>
+          <p class="text-slate-300 mt-2">Ideal para testar o fluxo — domínios com score alto (limitado).</p>
+          <p class="text-3xl font-extrabold my-4">R$5 <span class="text-sm font-medium">/ mês</span></p>
+          <ul class="text-slate-200 space-y-1 mb-4">
+            <li>• Acesso ao feed premium (limite diário)</li>
+            <li>• CSV pronto pra download</li>
+          </ul>
+          <button class="w-full rounded-xl bg-emerald-400 text-slate-900 font-bold py-2" onclick="openPayModal('Starter',5)">Pagar com PIX</button>
         </div>
+
+        <!-- Medium -->
+        <div class="rounded-2xl bg-slate-900/60 p-6 shadow ring-1 ring-sky-600">
+          <h3 class="text-xl font-bold">Medium</h3>
+          <p class="text-slate-300 mt-2">Para agências pequenas — mais domínios e prioridade.</p>
+          <p class="text-3xl font-extrabold my-4">R$15 <span class="text-sm font-medium">/ mês</span></p>
+          <ul class="text-slate-200 space-y-1 mb-4">
+            <li>• Feed premium completo</li>
+            <li>• CSV por nicho</li>
+            <li>• Prioridade na fila</li>
+          </ul>
+          <button class="w-full rounded-xl bg-emerald-400 text-slate-900 font-bold py-2" onclick="openPayModal('Medium',15)">Pagar com PIX</button>
+        </div>
+
+        <!-- Pro -->
+        <div class="rounded-2xl bg-slate-900/60 p-6 shadow">
+          <h3 class="text-xl font-bold">Pro</h3>
+          <p class="text-slate-300 mt-2">Para quem quer resultado real — recomendações selecionadas, maior frequência.</p>
+          <p class="text-3xl font-extrabold my-4">R$20 <span class="text-sm font-medium">/ mês</span></p>
+          <ul class="text-slate-200 space-y-1 mb-4">
+            <li>• Feed premium + alerts</li>
+            <li>• CSV + prioridade de entrega</li>
+            <li>• Suporte rápido (mensagens)</li>
+          </ul>
+          <button class="w-full rounded-xl bg-emerald-400 text-slate-900 font-bold py-2" onclick="openPayModal('Pro',20)">Pagar com PIX</button>
+        </div>
+
       </div>
+
+      <p class="text-slate-400 mt-6">Pagamento via PIX — depois do pagamento, envie comprovante no Telegram e receba o link premium automaticamente (bot disponível / envio manual).</p>
     </section>
+
+    <!-- FAQ / How it works -->
+    <section class="mb-12">
+      <h3 class="text-xl font-bold mb-3">Como funciona</h3>
+      <ol class="list-decimal ml-6 text-slate-300">
+        <li>Pague via PIX (cópia/cole a chave no modal).</li>
+        <li>Envie comprovante para o Telegram do vendedor.</li>
+        <li>Receba link privado com o `premium_feed.json` (ou CSV) — automático via bot ou manual em minutos.</li>
+      </ol>
+    </section>
+
   </main>
 
   <footer class="border-t border-slate-800">
     <div class="max-w-6xl mx-auto px-6 py-8 text-sm text-slate-400">© FreshLeads • Atualizado automaticamente</div>
   </footer>
 
+  <!-- Payment modal -->
+  <div id="payModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60">
+    <div class="bg-slate-900/95 rounded-2xl p-6 max-w-xl w-full">
+      <div class="flex justify-between items-start">
+        <div>
+          <h3 id="pm-plan" class="text-xl font-bold">Plano</h3>
+          <p id="pm-price" class="text-slate-300">R$0</p>
+        </div>
+        <button onclick="closePayModal()" class="text-slate-300">Fechar ✕</button>
+      </div>
+
+      <div class="mt-4">
+        <p class="text-slate-200">Pague via PIX para a chave abaixo. Depois envie comprovante no Telegram.</p>
+        <div class="mt-3 rounded-xl bg-slate-800/50 p-4">
+          <label class="text-xs text-slate-400">Chave PIX</label>
+          <div class="flex items-center gap-3 mt-1">
+            <input id="pm-pix" class="flex-1 rounded-md bg-slate-900 px-3 py-2 font-mono text-sm" readonly />
+            <button id="copyPixBtn" class="rounded-md bg-sky-500 px-3 py-2 text-slate-900 font-bold">Copiar</button>
+          </div>
+          <p class="text-xs text-slate-400 mt-2">Ao pagar, envie o comprovante para o Telegram:</p>
+          <a id="pm-telegram" class="inline-block mt-2 rounded-md bg-emerald-400 px-3 py-2 text-slate-900 font-bold" target="_blank">Abrir Telegram</a>
+        </div>
+
+        <div class="mt-4 text-slate-300">
+          <p><strong>Dica:</strong> tire screenshot do comprovante e envie por Telegram. O bot pode automatizar o envio do link premium.</p>
+        </div>
+
+        <div class="mt-6 flex gap-3">
+          <button onclick="paidManual()" class="flex-1 rounded-xl bg-sky-500 px-4 py-2 font-bold">Já paguei (enviar comprovante)</button>
+          <a id="pm-help" class="rounded-xl bg-slate-700 px-4 py-2">Precisa de ajuda</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
-    async function load() {
-      const res = await fetch('feed.json');
-      const data = await res.json();
-      document.getElementById('kpi-updated').textContent = new Date(data.updated).toLocaleString();
-      document.getElementById('kpi-count').textContent = data.count;
+    // --- feed loader ---
+    async function loadFeed(){
+      try{
+        const res = await fetch('feed.json');
+        const data = await res.json();
+        document.getElementById('kpi-updated').textContent = new Date(data.updated).toLocaleString();
+        document.getElementById('kpi-count').textContent = data.count;
+        window.feed = data.items || [];
+        render(window.feed);
+        document.getElementById('downloadPublic').href = 'https://raw.githubusercontent.com/ivnop/freshleads/main/fresh_domains_latest.csv';
+        document.getElementById('downloadPublic').setAttribute('download','fresh_domains.csv');
+      }catch(e){
+        console.error('feed load error', e);
+      }
+    }
+
+    function render(items){
       const rows = document.getElementById('rows');
-      const render = (items) => {
-        rows.innerHTML = '';
-        items.forEach(i => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `<td class="px-4 py-3 font-mono">${i.domain}</td><td class="px-4 py-3">${i.category}</td><td class="px-4 py-3">${i.score ?? '-'}</td>`;
-          rows.appendChild(tr);
-        });
-      };
-      render(data.items);
-      document.getElementById('search').addEventListener('input', e => {
-        const q = e.target.value.toLowerCase();
-        render(data.items.filter(i => i.domain.toLowerCase().includes(q)));
+      rows.innerHTML = '';
+      items.slice(0,500).forEach(i=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td class="px-4 py-3 font-mono"><a class=\"text-sky-300 hover:underline\" href=\"http://${i.domain}\" target=\"_blank\">${i.domain}</a></td><td class=\"px-4 py-3\">${i.niche || i.category || 'other'}</td><td class=\"px-4 py-3\">${i.score ?? '-'}</td>`;
+        rows.appendChild(tr);
       });
     }
-    load();
+
+    document.getElementById('search').addEventListener('input', e=>{
+      const q = e.target.value.toLowerCase();
+      render(window.feed.filter(i=>i.domain.toLowerCase().includes(q) || (i.title && i.title.toLowerCase().includes(q))));
+    });
+
+    // --- payment modal ---
+    function openPayModal(plan,price){
+      document.getElementById('pm-plan').textContent = plan;
+      document.getElementById('pm-price').textContent = `R$${price} / mês`;
+      document.getElementById('pm-pix').value = PIX_KEY || 'COLOQUE_SUA_CHAVE_PIX_AQUI';
+      const tg = document.getElementById('pm-telegram');
+      tg.href = TELEGRAM_LINK || '#';
+      tg.textContent = 'Abrir Telegram';
+      document.getElementById('payModal').classList.remove('hidden');
+      document.getElementById('payModal').classList.add('flex');
+    }
+    function closePayModal(){
+      document.getElementById('payModal').classList.remove('flex');
+      document.getElementById('payModal').classList.add('hidden');
+    }
+    document.getElementById('copyPixBtn').addEventListener('click', ()=>{
+      const val = document.getElementById('pm-pix').value;
+      navigator.clipboard.writeText(val).then(()=>{
+        alert('Chave PIX copiada!');
+      });
+    });
+
+    function paidManual(){
+      // abre telegram para enviar comprovante (user will send screenshot)
+      window.open(TELEGRAM_LINK, '_blank');
+      alert('Abra o Telegram e envie o comprovante para receber o link premium (pode ser manual ou via bot).');
+    }
+
+    document.getElementById('pm-help').addEventListener('click', ()=>{
+      alert('Se precisar, abra o Telegram do vendedor e peça suporte.');
+      window.open(TELEGRAM_LINK, '_blank');
+    });
+
+    // inicializa
+    loadFeed();
   </script>
 </body>
 </html>
