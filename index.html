@@ -1,238 +1,236 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>FreshLeads — Domínios Recentes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<title>FreshLeads</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #0b0f14;
-      color: #eaeaea;
-      margin: 0;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #05080f;
+  color: #e5e7eb;
+}
 
-    header {
-      padding: 20px;
-      background: #111827;
-      text-align: center;
-    }
+header {
+  padding: 30px 20px;
+  text-align: center;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+}
 
-    header h1 {
-      margin: 0;
-      color: #38bdf8;
-    }
+header h1 {
+  margin: 0;
+  font-size: 36px;
+  color: #38bdf8;
+}
 
-    main {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px;
-    }
+header p {
+  color: #94a3b8;
+  margin-top: 8px;
+}
 
-    .section {
-      margin-bottom: 40px;
-    }
+main {
+  max-width: 1000px;
+  margin: auto;
+  padding: 30px 20px;
+}
 
-    h2 {
-      border-left: 4px solid #38bdf8;
-      padding-left: 10px;
-    }
+h2 {
+  margin-bottom: 10px;
+  font-size: 22px;
+}
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-      background: #020617;
-    }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #020617;
+  border-radius: 10px;
+  overflow: hidden;
+}
 
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #1e293b;
-      text-align: left;
-    }
+th, td {
+  padding: 12px;
+  border-bottom: 1px solid #1e293b;
+}
 
-    th {
-      background: #020617;
-      color: #7dd3fc;
-    }
+th {
+  text-align: left;
+  color: #7dd3fc;
+  font-size: 14px;
+}
 
-    .blur {
-      filter: blur(6px);
-      user-select: none;
-    }
+.free {
+  margin-bottom: 40px;
+}
 
-    .locked {
-      position: relative;
-    }
+.premium-box {
+  margin-top: 40px;
+  background: linear-gradient(135deg, #020617, #020617);
+  border: 1px solid #1e293b;
+  padding: 30px;
+  border-radius: 14px;
+  text-align: center;
+}
 
-    .locked::after {
-      content: "🔒 Premium";
-      position: absolute;
-      top: 45%;
-      left: 45%;
-      background: #000;
-      padding: 10px 15px;
-      border-radius: 6px;
-      color: #facc15;
-      font-weight: bold;
-    }
+.premium-blur {
+  filter: blur(6px);
+  user-select: none;
+}
 
-    .plans {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
+.unlock-btn {
+  margin-top: 20px;
+  background: #38bdf8;
+  border: none;
+  color: #020617;
+  padding: 14px 24px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-    .plan {
-      background: #020617;
-      border: 1px solid #1e293b;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-    }
+.unlock-btn:hover {
+  background: #0ea5e9;
+}
 
-    .plan h3 {
-      color: #38bdf8;
-    }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  align-items: center;
+  justify-content: center;
+}
 
-    .price {
-      font-size: 28px;
-      margin: 10px 0;
-      color: #facc15;
-    }
+.modal-content {
+  background: #020617;
+  border-radius: 16px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  border: 1px solid #1e293b;
+}
 
-    button {
-      background: #38bdf8;
-      color: #020617;
-      border: none;
-      padding: 10px 15px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+.plan {
+  border: 1px solid #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
 
-    button:hover {
-      background: #0ea5e9;
-    }
+.plan h3 {
+  margin: 0;
+  color: #38bdf8;
+}
 
-    .pix-box {
-      display: none;
-      background: #020617;
-      border: 1px solid #38bdf8;
-      padding: 20px;
-      border-radius: 10px;
-      margin-top: 30px;
-    }
+.price {
+  font-size: 22px;
+  color: #facc15;
+  margin: 8px 0;
+}
 
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-  </style>
+.pix {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: #020617;
+  border: 1px dashed #38bdf8;
+}
+
+footer {
+  text-align: center;
+  color: #64748b;
+  font-size: 13px;
+  padding: 20px;
+}
+</style>
 </head>
 
 <body>
 
 <header>
   <h1>FreshLeads</h1>
-  <p>Domínios recém-registrados prontos pra negócio</p>
+  <p>Domínios recém-registrados com potencial comercial</p>
 </header>
 
 <main>
 
-  <!-- DOMÍNIOS PÚBLICOS -->
-  <section class="section">
-    <h2>Domínios Recentes (Free)</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Domínio</th>
-          <th>Categoria</th>
-        </tr>
-      </thead>
-      <tbody id="free-domains">
-        <tr><td>lojamodabr.com</td><td>E-commerce</td></tr>
-        <tr><td>technovaonline.net</td><td>Tech</td></tr>
-        <tr><td>agrovisiondigital.com</td><td>Negócios</td></tr>
-      </tbody>
-    </table>
-  </section>
+<section class="free">
+  <h2>Domínios Recentes (Free)</h2>
+  <table>
+    <thead>
+      <tr><th>Domínio</th><th>Nicho</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>lojamodabr.com</td><td>E-commerce</td></tr>
+      <tr><td>tecnovastore.net</td><td>Tecnologia</td></tr>
+      <tr><td>agrovisiondigital.com</td><td>Negócios</td></tr>
+    </tbody>
+  </table>
+</section>
 
-  <!-- DOMÍNIOS PREMIUM -->
-  <section class="section">
-    <h2>Domínios Premium</h2>
+<section class="premium-box">
+  <h2>Domínios Premium</h2>
 
-    <div class="locked">
-      <table class="blur">
-        <thead>
-          <tr>
-            <th>Domínio</th>
-            <th>Nicho</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>payfastshop.com</td><td>E-commerce</td><td>92</td></tr>
-          <tr><td>healthprimeai.com</td><td>Saúde</td><td>89</td></tr>
-          <tr><td>betzoneplus.com</td><td>Apostas</td><td>95</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+  <table class="premium-blur">
+    <thead>
+      <tr><th>Domínio</th><th>Nicho</th><th>Score</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>payfastshop.com</td><td>E-commerce</td><td>92</td></tr>
+      <tr><td>healthprimeai.com</td><td>Saúde</td><td>89</td></tr>
+      <tr><td>betzoneplus.com</td><td>Apostas</td><td>95</td></tr>
+    </tbody>
+  </table>
 
-  <!-- PLANOS -->
-  <section class="section">
-    <h2>Desbloquear Premium</h2>
-
-    <div class="plans">
-      <div class="plan">
-        <h3>Starter</h3>
-        <div class="price">R$ 9,90</div>
-        <p>Acesso diário limitado</p>
-        <button onclick="showPix()">Escolher</button>
-      </div>
-
-      <div class="plan">
-        <h3>Medium</h3>
-        <div class="price">R$ 19,90</div>
-        <p>Acesso completo diário</p>
-        <button onclick="showPix()">Escolher</button>
-      </div>
-
-      <div class="plan">
-        <h3>Pro</h3>
-        <div class="price">R$ 29,90</div>
-        <p>Acesso total + prioridade</p>
-        <button onclick="showPix()">Escolher</button>
-      </div>
-    </div>
-
-    <!-- PIX -->
-    <div class="pix-box" id="pixBox">
-      <h3>Pagamento via PIX</h3>
-      <p><strong>Chave PIX:</strong> (16) 99315-3900</p>
-      <p><strong>Nome:</strong> Pietro Faria</p>
-      <p>Após o pagamento, o acesso Premium será liberado.</p>
-    </div>
-
-  </section>
+  <button class="unlock-btn" onclick="openModal()">Desbloquear Premium</button>
+</section>
 
 </main>
 
 <footer>
-  © 2026 FreshLeads — Dados públicos analisados
+© 2026 FreshLeads
 </footer>
 
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-content">
+    <h2>Planos Premium</h2>
+
+    <div class="plan">
+      <h3>Starter</h3>
+      <div class="price">R$ 9,90</div>
+      <p>Acesso limitado diário</p>
+    </div>
+
+    <div class="plan">
+      <h3>Medium </h3>
+      <div class="price">R$ 19,90</div>
+      <p>Acesso completo diário</p>
+    </div>
+
+    <div class="plan">
+      <h3>Pro</h3>
+      <div class="price">R$ 29,90</div>
+      <p>Acesso total + prioridade</p>
+    </div>
+
+    <div class="pix">
+      <strong>PIX:</strong> (16) 99315-3900<br>
+      <strong>Nome:</strong> Pietro Faria
+    </div>
+
+    <button class="unlock-btn" onclick="closeModal()">Fechar</button>
+  </div>
+</div>
+
 <script>
-  function showPix() {
-    document.getElementById("pixBox").style.display = "block";
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  }
+function openModal() {
+  document.getElementById("modal").style.display = "flex";
+}
+function closeModal() {
+  document.getElementById("modal").style.display = "none";
+}
 </script>
 
 </body>
