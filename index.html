@@ -1,225 +1,455 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>FreshLeads — Domínios Recentes</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <title>FreshLeads — Domínios Novos</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body {
-      margin: 0;
-      font-family: Inter, Arial, sans-serif;
-      background: #0b0f14;
-      color: #eaeaea;
-    }
-    header {
-      padding: 20px;
-      text-align: center;
-      background: #0f1623;
-      border-bottom: 1px solid #1f2a44;
-    }
-    h1 { margin: 0; font-size: 2rem; }
-    nav {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    nav button {
-      background: none;
-      border: none;
-      color: #9db2ff;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-    nav button.locked {
-      color: #777;
-    }
-    main {
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    .card {
-      background: #111827;
-      border: 1px solid #1f2a44;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-    .plans {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 20px;
-    }
-    .plan {
-      border: 2px solid #1f2a44;
-      border-radius: 12px;
-      padding: 20px;
-      text-align: center;
-    }
-    .plan.featured {
-      border-color: #6c8cff;
-      box-shadow: 0 0 20px rgba(108,140,255,0.2);
-    }
-    .plan h3 { margin-top: 0; }
-    .price {
-      font-size: 2rem;
-      margin: 10px 0;
-      color: #6c8cff;
-    }
-    .btn {
-      background: #6c8cff;
-      border: none;
-      color: #000;
-      padding: 12px 18px;
-      border-radius: 8px;
-      font-size: 1rem;
-      cursor: pointer;
-      width: 100%;
-    }
-    .btn.secondary {
-      background: #1f2a44;
-      color: #fff;
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      color: #666;
-      font-size: 0.9rem;
-    }
-    .hidden { display: none; }
-    .pix-box {
-      background: #0f1623;
-      padding: 15px;
-      border-radius: 8px;
-      word-break: break-all;
-      margin: 10px 0;
-    }
+    /* small extra polish */
+    body { background: linear-gradient(180deg,#061025 0%, #081826 60%); }
+    a { text-decoration: none; }
+    .glass { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
   </style>
 </head>
-<body>
+<body class="text-slate-100 antialiased min-h-screen">
 
-<header>
-  <h1>FreshLeads</h1>
-  <p>Domínios recém-registrados com potencial real</p>
-  <nav>
-    <button onclick="showSection('public')">Público</button>
-    <button onclick="showSection('plans')">Planos</button>
-    <button id="premiumTab" class="locked" onclick="openPremium()">Premium 🔒</button>
-  </nav>
-</header>
+  <script>
+    // CONFIG: substitua TELEGRAM_LINK quando tiver o bot/URL pronto
+    const TELEGRAM_LINK = "https://t.me/SEU_TELEGRAM_AQUI";
+    const PIX_DISPLAY = "(16) 99315-3900";
+    const PIX_COPY = "16993153900";
+    const PIX_NAME = "Pietro Faria";
+  </script>
 
-<main>
+  <!-- HEADER -->
+  <header class="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
+    <div>
+      <h1 class="text-3xl font-extrabold">Fresh<span class="text-sky-400">Leads</span></h1>
+      <p class="text-slate-400 text-sm">Domínios recém-registrados com potencial comercial — atualizado automaticamente.</p>
+    </div>
+    <div class="space-x-3">
+      <button id="btnPublic" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700">Público</button>
+      <button id="btnPlans" class="px-3 py-2 rounded-lg bg-slate-800 hover:bg-slate-700">Planos</button>
+      <button id="btnPremium" class="px-3 py-2 rounded-lg bg-emerald-400 text-slate-900 font-semibold">Premium</button>
+    </div>
+  </header>
 
-  <!-- PUBLIC -->
-  <section id="public" class="card">
-    <h2>Feed Público</h2>
-    <p>Amostra gratuita com domínios de menor potencial.</p>
-    <p><b>Dica:</b> os melhores domínios ficam no Premium.</p>
-  </section>
+  <main class="max-w-6xl mx-auto px-6 pb-20">
 
-  <!-- PLANS -->
-  <section id="plans" class="card hidden">
-    <h2>Planos Premium</h2>
-    <div class="plans">
+    <!-- KPIs -->
+    <section class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-slate-400">Última atualização</div>
+        <div id="kpi-updated" class="mt-1 font-bold">—</div>
+      </div>
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-slate-400">Itens (público)</div>
+        <div id="kpi-count" class="mt-1 font-bold">—</div>
+      </div>
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-slate-400">Niches</div>
+        <div id="kpi-niches" class="mt-1 font-bold">—</div>
+      </div>
+      <div class="glass rounded-2xl p-4">
+        <div class="text-xs text-slate-400">Acesso</div>
+        <div id="kpi-access" class="mt-1 font-bold text-emerald-300">Free + Premium</div>
+      </div>
+    </section>
 
-      <div class="plan">
-        <h3>Starter</h3>
-        <div class="price">R$ 9,90</div>
-        <p>Acesso limitado por 24h</p>
-        <button class="btn" onclick="openPayment()">Escolher</button>
+    <!-- PUBLIC FEED -->
+    <section id="section-public" class="glass rounded-2xl p-6 mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h2 class="text-xl font-bold">Feed Público</h2>
+          <div class="text-slate-400 text-sm">Amostra pública — experimente e veja o valor.</div>
+        </div>
+
+        <div class="flex gap-3 items-center">
+          <select id="nicheFilter" class="bg-transparent ring-1 ring-slate-700 rounded-lg px-3 py-2 text-sm">
+            <option value="">Todas as categorias</option>
+            <option value="clinics">Clinics</option>
+            <option value="ecom">E-commerce</option>
+            <option value="services">Services</option>
+            <option value="other">Other</option>
+          </select>
+
+          <input id="q" placeholder="Buscar domínio ou título" class="bg-transparent ring-1 ring-slate-700 rounded-lg px-3 py-2 text-sm w-64" />
+
+          <a id="downloadPublic" class="inline-block bg-sky-600 hover:bg-sky-500 px-3 py-2 rounded-lg text-slate-900 text-sm font-semibold">Baixar CSV</a>
+        </div>
       </div>
 
-      <div class="plan featured">
-        <h3>Medium </h3>
-        <div class="price">R$ 29,90</div>
-        <p>Melhor custo-benefício<br>Mais domínios por dia</p>
-        <button class="btn" onclick="openPayment()">Escolher</button>
+      <div class="overflow-hidden rounded-xl border border-slate-800">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-900/80 text-slate-300">
+            <tr>
+              <th class="px-4 py-3">Domínio</th>
+              <th class="px-4 py-3">Título / Preview</th>
+              <th class="px-4 py-3">Nicho</th>
+              <th class="px-4 py-3">Score</th>
+            </tr>
+          </thead>
+          <tbody id="tblBody" class="divide-y divide-slate-800 bg-slate-900/40"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PLANS -->
+    <section id="section-plans" class="hidden glass rounded-2xl p-6 mb-8">
+      <h2 class="text-xl font-bold mb-4">Planos Premium</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold">Starter</div>
+          <div class="text-slate-400 text-sm">Teste rápido — acesso limitado</div>
+          <div class="mt-4 text-2xl font-extrabold text-emerald-300">R$ 9,90</div>
+          <ul class="mt-3 text-slate-300 text-sm space-y-1">
+            <li>• Feed premium (limitado)</li>
+            <li>• CSV pronto</li>
+          </ul>
+          <div class="mt-4">
+            <button class="btn-pay w-full" data-plan="Starter" data-price="9.90">Pagar com PIX</button>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-xl bg-gradient-to-r from-slate-900/60 to-sky-900/30 border-2 border-sky-600 shadow-lg">
+          <div class="font-bold">Medium <span class="text-amber-300">— Mais vendido</span></div>
+          <div class="text-slate-400 text-sm">Melhor equilíbrio: domínios diários e prioridade</div>
+          <div class="mt-4 text-2xl font-extrabold text-amber-200">R$ 29,90</div>
+          <ul class="mt-3 text-slate-300 text-sm space-y-1">
+            <li>• Feed premium completo</li>
+            <li>• CSV por nicho</li>
+            <li>• Prioridade</li>
+          </ul>
+          <div class="mt-4">
+            <button class="btn-pay w-full" data-plan="Medium" data-price="29.90">Pagar com PIX</button>
+          </div>
+        </div>
+
+        <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800">
+          <div class="font-bold">Pro</div>
+          <div class="text-slate-400 text-sm">Acesso total e atualizações frequentes</div>
+          <div class="mt-4 text-2xl font-extrabold text-sky-300">R$ 49,90</div>
+          <ul class="mt-3 text-slate-300 text-sm space-y-1">
+            <li>• Feed + alerts</li>
+            <li>• CSV + prioridade</li>
+          </ul>
+          <div class="mt-4">
+            <button class="btn-pay w-full" data-plan="Pro" data-price="49.90">Pagar com PIX</button>
+          </div>
+        </div>
       </div>
 
-      <div class="plan">
-        <h3>Pro</h3>
-        <div class="price">R$ 49,90</div>
-        <p>Acesso total<br>Prioridade máxima</p>
-        <button class="btn" onclick="openPayment()">Escolher</button>
+      <p class="text-slate-400 text-sm mt-4">Após o pagamento, envie comprovante + código temporário (gerado automaticamente na tela) para o nosso bot no Telegram e receba o link premium. O bot automatiza tudo.</p>
+    </section>
+
+    <!-- PAYMENT MODAL (hidden) -->
+    <div id="payModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 px-4">
+      <div class="bg-slate-900 rounded-2xl max-w-xl w-full p-6">
+        <div class="flex justify-between items-start">
+          <div>
+            <div id="pm-plan" class="text-xl font-bold">Plano</div>
+            <div id="pm-price" class="text-slate-400">R$0</div>
+          </div>
+          <button onclick="closePayModal()" class="text-slate-400">Fechar ✕</button>
+        </div>
+
+        <div class="mt-4">
+          <p class="text-slate-300">Pague via PIX usando a chave abaixo. Depois copie o código temporário e envie ao nosso bot no Telegram (ou clique no botão para abrir o bot).</p>
+
+          <div class="mt-4 bg-slate-800/60 p-4 rounded-lg">
+            <div class="text-xs text-slate-400">Chave PIX</div>
+            <div class="flex items-center gap-3 mt-1">
+              <input id="pixInput" class="bg-transparent mono px-3 py-2 w-full rounded-md" readonly />
+              <button id="copyPix" class="bg-sky-600 px-3 py-2 rounded-md font-semibold text-black">Copiar</button>
+            </div>
+            <div class="text-xs text-slate-400 mt-2">Nome: <span id="pixName" class="font-medium text-slate-200"></span></div>
+          </div>
+
+          <div class="mt-4">
+            <div class="text-xs text-slate-400">Código temporário (envie ao bot ou cole na conversa)</div>
+            <div class="flex items-center gap-3 mt-2">
+              <input id="tempCode" class="bg-transparent mono px-3 py-2 w-full rounded-md" readonly />
+              <button id="copyCode" class="bg-emerald-400 px-3 py-2 rounded-md font-bold text-black">Copiar código</button>
+            </div>
+            <div class="mt-3 flex gap-2">
+              <button id="btnPaid" class="bg-amber-400 px-4 py-2 rounded-md font-semibold text-black">Já paguei (abrir Telegram)</button>
+              <button id="btnHelp" class="bg-slate-700 px-4 py-2 rounded-md">Precisa de ajuda</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PREMIUM AREA -->
+    <section id="section-premium" class="hidden glass rounded-2xl p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-xl font-bold">Área Premium</h2>
+          <p class="text-slate-400">Seu acesso premium ativo será usado para redirecionar ao link rotativo válido por 24h.</p>
+        </div>
+        <div>
+          <div id="premiumStatus" class="text-sm text-emerald-300 font-medium">—</div>
+        </div>
       </div>
 
-    </div>
-  </section>
+      <div class="mt-4">
+        <div class="bg-slate-800/60 p-4 rounded-lg">
+          <div class="text-slate-300 text-sm">Link exclusivo (válido por 24h)</div>
+          <div id="premiumLinkContainer" class="mt-2">
+            <div class="mono p-3 bg-slate-900 rounded-md text-sky-300">Aguarde: gere seu código e envie ao bot para receber o link.</div>
+          </div>
 
-  <!-- PAYMENT -->
-  <section id="payment" class="card hidden">
-    <h2>Pagamento via PIX</h2>
-    <p>Use o PIX abaixo e depois clique em <b>Já paguei</b>.</p>
+          <div class="mt-4 flex gap-2">
+            <button id="btnRefreshLink" class="bg-sky-600 px-3 py-2 rounded-md">Verificar link</button>
+            <button id="btnLogout" class="bg-slate-700 px-3 py-2 rounded-md">Encerrar acesso</button>
+          </div>
+        </div>
+      </div>
 
-    <div class="pix-box">
-      <b>PIX:</b> 16993153900<br>
-      <b>Nome:</b> Pietro Faria
-    </div>
+    </section>
 
-    <button class="btn" onclick="confirmPayment()">Já paguei</button>
-    <button class="btn secondary" onclick="showSection('plans')">Voltar</button>
-  </section>
+  </main>
 
-  <!-- PREMIUM -->
-  <section id="premium" class="card hidden">
-    <h2>Área Premium </h2>
-    <p>Acesso liberado por 24 horas.</p>
-    <p><b>Link exclusivo:</b></p>
-    <div class="pix-box">
-      https://exemplo.com/premium-link-rotativo
-    </div>
-  </section>
+  <footer class="text-center text-slate-500 py-6">
+    © FreshLeads — atualizado automaticamente
+  </footer>
 
-</main>
+  <script>
+  // ---------- UTIL / STATE ----------
+  const RAW_CSV = "https://raw.githubusercontent.com/ivnop/freshleads/main/fresh_domains_latest.csv";
+  const FEED_JSON = "https://raw.githubusercontent.com/ivnop/freshleads/main/feed.json";
 
-<footer>
-  © 2026 — FreshLeads
-</footer>
-
-<script>
-  function showSection(id) {
-    document.querySelectorAll("main section").forEach(s => s.classList.add("hidden"));
-    document.getElementById(id).classList.remove("hidden");
+  function formatDateISO(iso) {
+    try { return new Date(iso).toLocaleString(); } catch(e) { return iso; }
   }
 
+  // premium helpers
+  function setPremiumLocal(expMs, plan, code) {
+    localStorage.setItem("premium_until", String(expMs));
+    localStorage.setItem("premium_plan", plan);
+    localStorage.setItem("premium_code", code);
+  }
+  function clearPremiumLocal() {
+    localStorage.removeItem("premium_until");
+    localStorage.removeItem("premium_plan");
+    localStorage.removeItem("premium_code");
+  }
   function hasPremium() {
     const until = localStorage.getItem("premium_until");
     return until && Date.now() < Number(until);
   }
 
-  function updatePremiumUI() {
-    const tab = document.getElementById("premiumTab");
-    if (hasPremium()) {
-      tab.classList.remove("locked");
-      tab.textContent = "Premium";
-    } else {
-      tab.classList.add("locked");
-      tab.textContent = "Premium 🔒";
-    }
+  // generate secure-ish token
+  function generateCode() {
+    const t = Date.now().toString(36) + Math.random().toString(36).slice(2,10);
+    return t.toUpperCase().slice(0,12);
   }
 
-  function openPremium() {
+  // ---------- UI wiring ----------
+  const sections = {
+    public: document.getElementById("section-public"),
+    plans: document.getElementById("section-plans"),
+    premium: document.getElementById("section-premium"),
+    payment: document.getElementById("payment")
+  };
+  function showSection(name) {
+    Object.values(sections).forEach(s => s && s.classList.add("hidden"));
+    const el = sections[name];
+    if (el) el.classList.remove("hidden");
+    // update premium tab UI
+    updatePremiumTab();
+  }
+  document.getElementById("btnPublic").addEventListener("click", ()=> showSection("public"));
+  document.getElementById("btnPlans").addEventListener("click", ()=> showSection("plans"));
+  document.getElementById("btnPremium").addEventListener("click", ()=>{
+    if (!hasPremium()) showSection("plans");
+    else showSection("premium");
+  });
+
+  // payment modal handlers
+  const payModal = document.getElementById("payModal");
+  const pixInput = document.getElementById("pixInput");
+  const pixName = document.getElementById("pixName");
+  const pmPlan = document.getElementById("pm-plan");
+  const pmPrice = document.getElementById("pm-price");
+  const tempCodeInput = document.getElementById("tempCode");
+  const btnPaid = document.getElementById("btnPaid");
+
+  document.querySelectorAll(".btn-pay").forEach(b=>{
+    b.addEventListener("click", (e)=>{
+      const plan = e.currentTarget.dataset.plan;
+      const price = e.currentTarget.dataset.price;
+      openPay(plan, price);
+    });
+  });
+
+  function openPay(plan, price) {
+    pmPlan.textContent = plan;
+    pmPrice.textContent = `R$ ${price}`;
+    pixInput.value = PIX_COPY;
+    pixName.textContent = PIX_NAME;
+    const code = generateCode();
+    tempCodeInput.value = code;
+    payModal.classList.remove("hidden");
+    payModal.classList.add("flex");
+  }
+  function closePayModal(){
+    payModal.classList.add("hidden");
+    payModal.classList.remove("flex");
+  }
+  document.getElementById("copyPix").addEventListener("click", ()=> {
+    navigator.clipboard.writeText(pixInput.value).then(()=> alert("Chave PIX copiada"));
+  });
+  document.getElementById("copyCode").addEventListener("click", ()=> {
+    navigator.clipboard.writeText(tempCodeInput.value).then(()=> alert("Código copiado"));
+  });
+
+  // "Já paguei" -> open telegram and mark local premium (MVP)
+  btnPaid.addEventListener("click", ()=>{
+    // set local premium for 24h, store plan and code
+    const plan = pmPlan.textContent || "Starter";
+    const code = tempCodeInput.value || generateCode();
+    const expires = Date.now() + 24*60*60*1000;
+    setPremiumLocal(expires, plan, code);
+    // open telegram for user to send comprovante + code to bot
+    window.open(TELEGRAM_LINK, "_blank");
+    updatePremiumUI();
+    closePayModal();
+    alert("Você foi redirecionado ao Telegram. Envie o comprovante e o código temporário para o bot para receber o link premium automaticamente.");
+  });
+
+  document.getElementById("btnHelp").addEventListener("click", ()=> {
+    window.open(TELEGRAM_LINK, "_blank");
+  });
+
+  // logout / revoke
+  document.getElementById("btnLogout").addEventListener("click", ()=>{
+    if (confirm("Encerrar acesso premium agora?")) {
+      clearPremiumLocal();
+      updatePremiumUI();
+      showSection("public");
+    }
+  });
+
+  document.getElementById("btnRefreshLink").addEventListener("click", ()=>{
+    renderPremiumLink();
+  });
+
+  // update premium UI and tab label
+  function updatePremiumUI(){
+    const status = document.getElementById("premiumStatus");
+    if (hasPremium()) {
+      const plan = localStorage.getItem("premium_plan") || 'Starter';
+      const until = Number(localStorage.getItem("premium_until"));
+      status.textContent = `Ativo: ${plan} — expira ${new Date(until).toLocaleString()}`;
+      document.getElementById("btnPremium").classList.remove("bg-emerald-400");
+      document.getElementById("btnPremium").classList.add("bg-sky-600");
+    } else {
+      status.textContent = 'Sem acesso';
+      document.getElementById("btnPremium").classList.remove("bg-sky-600");
+      document.getElementById("btnPremium").classList.add("bg-emerald-400");
+    }
+    // premium link area
+    renderPremiumLink();
+  }
+
+  function renderPremiumLink(){
+    const container = document.getElementById("premiumLinkContainer");
+    container.innerHTML = '';
     if (!hasPremium()) {
-      showSection("plans");
+      container.innerHTML = '<div class="mono p-3 bg-slate-900 rounded-md text-sky-300">Sem acesso: pague e envie comprovante ao bot para receber o link.</div>';
       return;
     }
-    showSection("premium");
+    // If premium: show instruction and placeholder link (real link will be sent by bot)
+    const code = localStorage.getItem("premium_code") || '—';
+    const plan = localStorage.getItem("premium_plan") || 'Starter';
+    const link = document.createElement("div");
+    link.className = 'mono p-3 bg-slate-900 rounded-md text-emerald-300';
+    link.textContent = `Aguarde: o bot irá enviar o link para o plano ${plan}. Código temporário: ${code}`;
+    container.appendChild(link);
+
+    // copy & open bot buttons
+    const row = document.createElement("div");
+    row.className = 'mt-3 flex gap-2';
+    row.innerHTML = `<button id="copyTemp" class="bg-amber-400 px-3 py-2 rounded-md font-bold text-black">Copiar código</button>
+                     <button id="openBot" class="bg-sky-600 px-3 py-2 rounded-md">Abrir bot</button>`;
+    container.appendChild(row);
+
+    document.getElementById("copyTemp").addEventListener("click", ()=>{
+      navigator.clipboard.writeText(code).then(()=> alert("Código copiado! Envie ao bot no Telegram."));
+    });
+    document.getElementById("openBot").addEventListener("click", ()=> window.open(TELEGRAM_LINK, "_blank"));
   }
 
-  function openPayment() {
-    showSection("payment");
+  // ---------- FEED LOADER ----------
+  let feedItems = [];
+  async function loadFeed(){
+    try {
+      const res = await fetch(FEED_JSON);
+      const feed = await res.json();
+      feedItems = feed.items || [];
+      document.getElementById("kpi-updated").textContent = formatDateISO(feed.updated || new Date().toISOString());
+      document.getElementById("kpi-count").textContent = feed.count || feedItems.length;
+      const niches = Array.from(new Set(feedItems.map(i => i.niche || 'other')));
+      document.getElementById("kpi-niches").textContent = niches.join(' • ');
+      renderTable(feedItems);
+      document.getElementById("downloadPublic").href = RAW_CSV;
+      document.getElementById("downloadPublic").setAttribute('download','fresh_domains.csv');
+    } catch(e) {
+      console.error("Erro ao carregar feed:", e);
+      document.getElementById("kpi-updated").textContent = 'sem dados';
+      document.getElementById("kpi-count").textContent = '0';
+      document.getElementById("kpi-niches").textContent = '-';
+    }
   }
 
-  function confirmPayment() {
-    const expires = Date.now() + 24 * 60 * 60 * 1000;
-    localStorage.setItem("premium_until", expires);
-    updatePremiumUI();
-    showSection("premium");
+  function renderTable(items) {
+    const tbody = document.getElementById("tblBody");
+    tbody.innerHTML = '';
+    items.slice(0,500).forEach(it => {
+      const tr = document.createElement('tr');
+      tr.className = 'hover:bg-slate-800';
+      tr.innerHTML = `<td class="px-4 py-3 mono"><a class="text-sky-300 hover:underline" href="http://${it.domain}" target="_blank">${it.domain}</a></td>
+                      <td class="px-4 py-3 text-sm">${(it.title || '').slice(0,90)}</td>
+                      <td class="px-4 py-3">${it.niche || 'other'}</td>
+                      <td class="px-4 py-3 font-semibold">${it.score ?? '-'}</td>`;
+      tbody.appendChild(tr);
+    });
   }
 
+  // filters
+  document.getElementById("nicheFilter").addEventListener("change", ()=>{
+    applyFilters();
+  });
+  document.getElementById("q").addEventListener("input", ()=>{
+    applyFilters();
+  });
+
+  function applyFilters(){
+    const q = document.getElementById("q").value.toLowerCase();
+    const niche = document.getElementById("nicheFilter").value;
+    const filtered = feedItems.filter(i=>{
+      if (niche && (i.niche || 'other') !== niche) return false;
+      if (q && !(i.domain.toLowerCase().includes(q) || (i.title && i.title.toLowerCase().includes(q)))) return false;
+      return true;
+    });
+    renderTable(filtered);
+  }
+
+  // init
+  showSection("public");
+  loadFeed();
   updatePremiumUI();
-</script>
 
+  // small UX niceties: keyboard shortcut "/" to focus search
+  window.addEventListener("keydown", e=>{
+    if (e.key === "/") {
+      e.preventDefault();
+      document.getElementById("q").focus();
+    }
+  });
+  </script>
 </body>
 </html>
