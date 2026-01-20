@@ -1,237 +1,279 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>FreshLeads</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8" />
+  <title>FreshLeads — Premium</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <script>
+    // CONFIG (substitua antes de publicar)
+    const API_BASE = "https://YOUR_BACKEND_URL_HERE"; // ex: https://freshleads-api.up.railway.app
+    const RAW_CSV = "https://raw.githubusercontent.com/ivnop/freshleads/main/fresh_domains_latest.csv";
+    const FEED_JSON = "https://raw.githubusercontent.com/ivnop/freshleads/main/feed.json";
+    const PIX_COPY = "16993153900";
+    const PIX_DISPLAY = "(16) 99315-3900";
+    const PIX_NAME = "Pietro Faria";
+    const TELEGRAM_LINK = "https://t.me/SEU_BOT_AQUI"; // bot que vai mandar token
+  </script>
 
-<style>
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: #05080f;
-  color: #e5e7eb;
-}
-
-header {
-  padding: 30px 20px;
-  text-align: center;
-  background: radial-gradient(circle at top, #0f172a, #020617);
-}
-
-header h1 {
-  margin: 0;
-  font-size: 36px;
-  color: #38bdf8;
-}
-
-header p {
-  color: #94a3b8;
-  margin-top: 8px;
-}
-
-main {
-  max-width: 1000px;
-  margin: auto;
-  padding: 30px 20px;
-}
-
-h2 {
-  margin-bottom: 10px;
-  font-size: 22px;
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: #020617;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-th, td {
-  padding: 12px;
-  border-bottom: 1px solid #1e293b;
-}
-
-th {
-  text-align: left;
-  color: #7dd3fc;
-  font-size: 14px;
-}
-
-.free {
-  margin-bottom: 40px;
-}
-
-.premium-box {
-  margin-top: 40px;
-  background: linear-gradient(135deg, #020617, #020617);
-  border: 1px solid #1e293b;
-  padding: 30px;
-  border-radius: 14px;
-  text-align: center;
-}
-
-.premium-blur {
-  filter: blur(6px);
-  user-select: none;
-}
-
-.unlock-btn {
-  margin-top: 20px;
-  background: #38bdf8;
-  border: none;
-  color: #020617;
-  padding: 14px 24px;
-  font-size: 16px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.unlock-btn:hover {
-  background: #0ea5e9;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,.7);
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: #020617;
-  border-radius: 16px;
-  padding: 30px;
-  max-width: 500px;
-  width: 90%;
-  border: 1px solid #1e293b;
-}
-
-.plan {
-  border: 1px solid #1e293b;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-
-.plan h3 {
-  margin: 0;
-  color: #38bdf8;
-}
-
-.price {
-  font-size: 22px;
-  color: #facc15;
-  margin: 8px 0;
-}
-
-.pix {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 10px;
-  background: #020617;
-  border: 1px dashed #38bdf8;
-}
-
-footer {
-  text-align: center;
-  color: #64748b;
-  font-size: 13px;
-  padding: 20px;
-}
-</style>
+  <style>
+    /* minimal nice styling */
+    body{font-family:Inter,system-ui,Arial;margin:0;background:#071122;color:#e6eef6}
+    header{padding:20px;text-align:center;background:linear-gradient(180deg,#042433,#061026)}
+    h1{margin:0;color:#7dd3fc}
+    main{max-width:1100px;margin:24px auto;padding:0 18px}
+    .card{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:18px;margin-bottom:18px}
+    .btn{background:#34d399;color:#022; padding:10px 14px;border-radius:8px;border:0;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#cfe}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
+    th{color:#93c5fd}
+    .blur{filter:blur(6px);user-select:none}
+    .mono{font-family:ui-monospace,Menlo,monospace}
+    .kpi{display:flex;gap:12px}
+    .kpi .box{background:rgba(255,255,255,0.02);padding:10px;border-radius:8px}
+    #payModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center}
+    #payModal .content{width:100%;max-width:520px;background:#041422;padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .small{font-size:13px;color:#9fb7c6}
+  </style>
 </head>
-
 <body>
+  <header>
+    <h1>FreshLeads</h1>
+    <div class="small">Domínios recém-criados com potencial comercial — público + premium</div>
+  </header>
 
-<header>
-  <h1>FreshLeads</h1>
-  <p>Domínios recém-registrados com potencial comercial</p>
-</header>
-
-<main>
-
-<section class="free">
-  <h2>Domínios Recentes (Free)</h2>
-  <table>
-    <thead>
-      <tr><th>Domínio</th><th>Nicho</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>lojamodabr.com</td><td>E-commerce</td></tr>
-      <tr><td>tecnovastore.net</td><td>Tecnologia</td></tr>
-      <tr><td>agrovisiondigital.com</td><td>Negócios</td></tr>
-    </tbody>
-  </table>
-</section>
-
-<section class="premium-box">
-  <h2>Domínios Premium</h2>
-
-  <table class="premium-blur">
-    <thead>
-      <tr><th>Domínio</th><th>Nicho</th><th>Score</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>payfastshop.com</td><td>E-commerce</td><td>92</td></tr>
-      <tr><td>healthprimeai.com</td><td>Saúde</td><td>89</td></tr>
-      <tr><td>betzoneplus.com</td><td>Apostas</td><td>95</td></tr>
-    </tbody>
-  </table>
-
-  <button class="unlock-btn" onclick="openModal()">Desbloquear Premium</button>
-</section>
-
-</main>
-
-<footer>
-© 2026 FreshLeads
-</footer>
-
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <div class="modal-content">
-    <h2>Planos Premium</h2>
-
-    <div class="plan">
-      <h3>Starter</h3>
-      <div class="price">R$ 9,90</div>
-      <p>Acesso limitado diário</p>
+  <main>
+    <div class="kpi" style="margin:16px 0">
+      <div class="box card">Última: <span id="kpi-updated">—</span></div>
+      <div class="box card">Total público: <span id="kpi-count">—</span></div>
+      <div class="box card">Novos hoje: <span id="kpi-today">—</span></div>
     </div>
 
-    <div class="plan">
-      <h3>Medium </h3>
-      <div class="price">R$ 19,90</div>
-      <p>Acesso completo diário</p>
-    </div>
+    <section class="card" id="publicCard">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong>Feed público</strong>
+        <div>
+          <select id="nicheFilter" class="small"></select>
+          <input id="q" placeholder="buscar..." class="small" style="margin-left:8px;padding:6px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#d8eef8">
+          <a id="downloadPublic" class="btn ghost small" style="margin-left:8px">Baixar CSV</a>
+          <button id="openPlans" class="btn" style="margin-left:8px">Desbloquear Premium</button>
+        </div>
+      </div>
 
-    <div class="plan">
-      <h3>Pro</h3>
-      <div class="price">R$ 29,90</div>
-      <p>Acesso total + prioridade</p>
-    </div>
+      <div style="overflow:auto;max-height:420px">
+        <table>
+          <thead><tr><th>Domínio</th><th>Preview</th><th>Nicho</th><th>Score</th></tr></thead>
+          <tbody id="tblBody"></tbody>
+        </table>
+      </div>
+    </section>
 
-    <div class="pix">
-      <strong>PIX:</strong> (16) 99315-3900<br>
-      <strong>Nome:</strong> Pietro Faria
-    </div>
+    <section class="card" id="premiumCard">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong>Premium (exclusivo)</strong>
+        <div id="premiumStatus" class="small">—</div>
+      </div>
 
-    <button class="unlock-btn" onclick="closeModal()">Fechar</button>
+      <div id="premiumContent" class="card" style="margin-top:12px">
+        <!-- blurred preview -->
+        <div id="premiumPreview" class="blur">
+          <table>
+            <thead><tr><th>Domínio</th><th>Nicho</th><th>Score</th></tr></thead>
+            <tbody>
+              <tr><td>aiwallet.com</td><td>ecom</td><td>92</td></tr>
+              <tr><td>fastcloud.app</td><td>services</td><td>89</td></tr>
+              <tr><td>healthprime.ai</td><td>clinics</td><td>91</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div id="premiumActions" style="margin-top:12px">
+          <div class="small">Para acessar o link premium (válido 24h), pague via PIX e o bot te enviará o token automático.</div>
+          <div style="margin-top:8px">
+            <button id="btnOpenPay" class="btn">Pagar via PIX</button>
+            <button id="btnRefresh" class="btn ghost" style="margin-left:8px">Verificar Token</button>
+          </div>
+          <div id="premiumLinkOut" style="margin-top:12px"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- payment modal -->
+  <div id="payModal">
+    <div class="content">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong id="planName">Plano</strong>
+          <div class="small" id="planPrice">R$ 0</div>
+        </div>
+        <button onclick="closePayModal()" class="btn ghost">Fechar</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <div class="small">Pague via PIX usando a chave abaixo. Depois abra o bot no Telegram e envie comprovante; o bot devolve o token automaticamente.</div>
+
+        <div style="margin-top:10px;padding:12px;border-radius:10px;background:#021826;border:1px dashed rgba(125,211,252,0.12)">
+          <div style="font-size:14px"><strong>PIX:</strong> <span id="pixDisplay"></span></div>
+          <div class="small" style="margin-top:6px"><strong>Nome:</strong> <span id="pixName"></span></div>
+          <div style="margin-top:8px">
+            <input id="copyPixInput" class="mono" readonly style="width:100%;padding:8px;border-radius:6px;background:transparent;border:0;color:#dff"/>
+            <div style="margin-top:6px"><button id="btnCopyPix" class="btn">Copiar PIX</button>
+              <button id="btnOpenBot" class="btn ghost" style="margin-left:8px">Abrir bot (Telegram)</button></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px" class="small">
+          Depois de enviar o comprovante, o bot irá enviar o token automaticamente. Cole o token aqui depois para liberar o link:
+        </div>
+        <div style="margin-top:8px">
+          <input id="tokenInput" placeholder="Cole o token aqui" style="width:100%;padding:8px;border-radius:6px;background:transparent;border:1px solid rgba(255,255,255,0.04);color:#dff"/>
+          <div style="margin-top:8px"><button id="btnSubmitToken" class="btn">Usar token</button></div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
 <script>
-function openModal() {
-  document.getElementById("modal").style.display = "flex";
-}
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-}
-</script>
+/* ---------- config ---------- */
+const FEED_JSON_URL = FEED_JSON; // from top config inlined
+const RAW_CSV_URL = RAW_CSV;
+const API = API_BASE; // backend base
+const PIX_DISPLAY_INLINE = PIX_DISPLAY;
+const PIX_COPY_INLINE = PIX_COPY;
+const PIX_NAME_INLINE = PIX_NAME;
+const TELEGRAM = TELEGRAM_LINK;
 
+/* ---------- UI wiring ---------- */
+document.getElementById('pixDisplay').textContent = PIX_DISPLAY_INLINE;
+document.getElementById('pixName').textContent = PIX_NAME_INLINE;
+document.getElementById('copyPixInput').value = PIX_COPY_INLINE;
+
+document.getElementById('openPlans').addEventListener('click', ()=> openPayModal('Medium', '29.90'));
+document.getElementById('btnOpenPay').addEventListener('click', ()=> openPayModal('Medium', '29.90'));
+document.getElementById('btnCopyPix').addEventListener('click', ()=> {
+  navigator.clipboard.writeText(PIX_COPY_INLINE).then(()=> alert('PIX copiado'));
+});
+document.getElementById('btnOpenBot').addEventListener('click', ()=> window.open(TELEGRAM,'_blank'));
+
+document.getElementById('btnSubmitToken').addEventListener('click', async ()=>{
+  const token = document.getElementById('tokenInput').value.trim();
+  if(!token) return alert('Cole o token que o bot lhe enviou');
+  await useToken(token);
+});
+
+/* modal */
+function openPayModal(plan,price) {
+  document.getElementById('payModal').style.display = 'flex';
+  document.getElementById('planName').textContent = plan;
+  document.getElementById('planPrice').textContent = `R$ ${price}`;
+}
+function closePayModal(){ document.getElementById('payModal').style.display = 'none'; }
+
+/* ---------- FEED ---------- */
+let feedItems = [];
+async function loadFeed(){
+  try{
+    const r = await fetch(FEED_JSON_URL);
+    const feed = await r.json();
+    feedItems = feed.items || [];
+    document.getElementById('kpi-updated').textContent = new Date(feed.updated||Date.now()).toLocaleString();
+    document.getElementById('kpi-count').textContent = feed.count || feedItems.length;
+    document.getElementById('kpi-today').textContent = feed.today || 0;
+    populateNicheFilter();
+    renderTable(feedItems);
+    document.getElementById('downloadPublic').href = RAW_CSV_URL;
+  }catch(e){
+    console.error(e);
+    document.getElementById('kpi-updated').textContent = 'sem dados';
+  }
+}
+function populateNicheFilter(){
+  const sel = document.getElementById('nicheFilter');
+  const s = Array.from(new Set(feedItems.map(x => x.niche || 'other')));
+  sel.innerHTML = '<option value="">Todas</option>' + s.map(x => `<option value="${x}">${x}</option>`).join('');
+  sel.addEventListener('change', applyFilters);
+}
+function renderTable(items){
+  const tbody = document.getElementById('tblBody');
+  tbody.innerHTML = '';
+  items.slice(0,500).forEach(it=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="mono"><a style="color:#9be7ff" href="http://${it.domain}" target="_blank">${it.domain}</a></td>
+                    <td>${(it.title||'').slice(0,100)}</td>
+                    <td>${it.niche||'other'}</td>
+                    <td>${it.score||'-'}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+function applyFilters(){
+  const q = (document.getElementById('q').value||'').toLowerCase();
+  const niche = document.getElementById('nicheFilter').value;
+  const filtered = feedItems.filter(i=>{
+    if(niche && (i.niche||'other') !== niche) return false;
+    if(q && !(i.domain.toLowerCase().includes(q) || (i.title && i.title.toLowerCase().includes(q)))) return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+
+/* ---------- TOKEN flow ---------- */
+async function useToken(token){
+  try{
+    const r = await fetch(`${API}/validate?token=${encodeURIComponent(token)}`);
+    const j = await r.json();
+    if(!j.valid) return alert('Token inválido ou expirado.');
+    // save token locally so user stays logged for duration
+    localStorage.setItem('access_token', token);
+    localStorage.setItem('access_expires', String(Date.now() + (j.ttl_ms || 24*60*60*1000)));
+    localStorage.setItem('access_plan', j.plan || 'Medium');
+    showPremiumLink(j.link, j.plan, j.expires);
+    closePayModal();
+    alert('Acesso liberado! O link premium aparece abaixo.');
+  }catch(e){
+    console.error(e);
+    alert('Erro ao validar token. Tente novamente.');
+  }
+}
+
+function showPremiumLink(link, plan, expires){
+  const out = document.getElementById('premiumLinkOut');
+  out.innerHTML = `<div class="small">Plano: ${plan} — expira: ${new Date(expires).toLocaleString()}</div>
+                   <div style="margin-top:8px"><a class="btn" href="${link}" target="_blank">Abrir link premium</a>
+                   <button class="btn ghost" style="margin-left:8px" onclick="copyLink('${link}')">Copiar link</button></div>`;
+  // unblur preview
+  document.getElementById('premiumPreview').classList.remove('blur');
+  document.getElementById('premiumStatus').textContent = `Ativo — ${plan}`;
+}
+
+function copyLink(l){
+  navigator.clipboard.writeText(l).then(()=> alert('Link copiado'));
+}
+
+/* automatic check token in localStorage (so they remain active until expire) */
+async function checkLocalToken(){
+  const tok = localStorage.getItem('access_token');
+  const exp = Number(localStorage.getItem('access_expires') || 0);
+  if(!tok || Date.now() > exp) {
+    // clear
+    localStorage.removeItem('access_token'); localStorage.removeItem('access_plan'); localStorage.removeItem('access_expires');
+    return;
+  }
+  // validate with backend to get live link
+  try{
+    const r = await fetch(`${API}/validate?token=${encodeURIComponent(tok)}`);
+    const j = await r.json();
+    if(j.valid) showPremiumLink(j.link, j.plan, j.expires);
+  }catch(e){
+    console.error('validate failed', e);
+  }
+}
+
+/* manual "refresh" check (button) */
+document.getElementById('btnRefresh').addEventListener('click', checkLocalToken);
+
+loadFeed();
+checkLocalToken();
+</script>
 </body>
 </html>
